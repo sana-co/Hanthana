@@ -12,8 +12,6 @@ type FormValues = {
 }
 
 type FormErrors = Partial<Record<keyof FormValues, string>>
-type TouchedState = Partial<Record<keyof FormValues, boolean>>
-
 const initialValues: FormValues = {
   firstName: '',
   lastName: '',
@@ -79,44 +77,27 @@ function validate(values: FormValues): FormErrors {
 
 function App() {
   const [values, setValues] = useState<FormValues>(initialValues)
-  const [touched, setTouched] = useState<TouchedState>({})
   const [submitted, setSubmitted] = useState(false)
 
   const errors = validate(values)
   const hasErrors = Object.keys(errors).length > 0
 
-  const visibleErrors = Object.fromEntries(
-    Object.entries(errors).filter(([key]) => touched[key as keyof FormValues]),
-  ) as FormErrors
+  const visibleErrors = submitted ? errors : {}
 
   function updateField(name: keyof FormValues, value: string) {
     setValues((current) => ({ ...current, [name]: value }))
   }
 
-  function touchField(name: keyof FormValues) {
-    setTouched((current) => ({ ...current, [name]: true }))
-  }
-
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+  event.preventDefault()
 
-    setTouched({
-      firstName: true,
-      lastName: true,
-      username: true,
-      email: true,
-      phone: true,
-      password: true,
-      confirmPassword: true,
-    })
+  setSubmitted(true)
 
-    if (Object.keys(validate(values)).length > 0) {
-      setSubmitted(false)
-      return
-    }
-
-    setSubmitted(true)
+  if (Object.keys(validate(values)).length > 0) {
+    return
   }
+
+  console.log('Form submitted:', values)}
 
   return (
     <main className="auth-shell">
@@ -136,7 +117,6 @@ function App() {
               value={values.firstName}
               error={visibleErrors.firstName}
               onChange={updateField}
-              onBlur={touchField}
               icon={<UserIcon />}
             />
             <Field
@@ -146,7 +126,6 @@ function App() {
               value={values.lastName}
               error={visibleErrors.lastName}
               onChange={updateField}
-              onBlur={touchField}
               icon={<UserIcon />}
             />
           </div>
@@ -158,7 +137,6 @@ function App() {
             value={values.username}
             error={visibleErrors.username}
             onChange={updateField}
-            onBlur={touchField}
             icon={<UserIcon />}
           />
           <Field
@@ -168,7 +146,6 @@ function App() {
             value={values.email}
             error={visibleErrors.email}
             onChange={updateField}
-            onBlur={touchField}
             icon={<MailIcon />}
           />
           <Field
@@ -178,7 +155,6 @@ function App() {
             value={values.phone}
             error={visibleErrors.phone}
             onChange={updateField}
-            onBlur={touchField}
             icon={<PhoneIcon />}
           />
           <Field
@@ -188,7 +164,6 @@ function App() {
             value={values.password}
             error={visibleErrors.password}
             onChange={updateField}
-            onBlur={touchField}
             icon={<LockIcon />}
           />
           <Field
@@ -198,7 +173,6 @@ function App() {
             value={values.confirmPassword}
             error={visibleErrors.confirmPassword}
             onChange={updateField}
-            onBlur={touchField}
             icon={<LockIcon />}
           />
 
@@ -240,7 +214,6 @@ type FieldProps = {
   value: string
   error?: string
   onChange: (name: keyof FormValues, value: string) => void
-  onBlur: (name: keyof FormValues) => void
   icon: ReactNode
 }
 
@@ -251,7 +224,6 @@ function Field({
   value,
   error,
   onChange,
-  onBlur,
   icon,
 }: FieldProps) {
   const fieldId = `field-${name}`
@@ -273,7 +245,6 @@ function Field({
           aria-invalid={Boolean(error)}
           aria-describedby={error ? errorId : undefined}
           onChange={(event) => onChange(name, event.target.value)}
-          onBlur={() => onBlur(name)}
         />
       </div>
       <span className="error-text" id={error ? errorId : undefined}>
