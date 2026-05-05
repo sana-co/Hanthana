@@ -17,9 +17,18 @@
   backdrop-filter: blur(18px);
 }
 
+.login-card {
+  width: min(100%, 560px);
+  padding: 48px 46px 42px;
+}
+
 .auth-header {
   text-align: center;
   margin-bottom: 24px;
+}
+
+.login-header {
+  margin-bottom: 28px;
 }
 
 .auth-badge {
@@ -240,6 +249,39 @@
   text-decoration: underline;
 }
 
+.text-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #1692db;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.text-link:hover {
+  text-decoration: underline;
+}
+
+.auth-secondary-action {
+  margin: 2px 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.auth-secondary-action .text-link {
+  color: #1692db;
+  font-weight: 500;
+}
+
+.auth-secondary-action .text-link:hover {
+  text-decoration: underline;
+}
+
+.secondary-link {
+  font-weight: 500;
+}
+
 .success-message {
   margin: 2px 0 4px;
   padding: 12px 14px;
@@ -266,6 +308,10 @@
   .auth-card {
     padding: 24px 18px 28px;
     border-radius: 20px;
+  }
+
+  .login-card {
+    padding: 30px 22px 32px;
   }
 
   .form-grid {
