@@ -1,5 +1,6 @@
 import { type FormEvent, type ReactNode, useState } from 'react'
 import '../Register.css'
+import { postJson } from '../lib/api'
 
 type RegisterProps = {
   onRegistered: () => void
@@ -83,6 +84,9 @@ function validate(values: FormValues): FormErrors {
 function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
   const [values, setValues] = useState<FormValues>(initialValues)
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [serverError, setServerError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   const errors = validate(values)
 
@@ -92,16 +96,39 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
     setValues((current) => ({ ...current, [name]: value }))
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     setSubmitted(true)
+    setServerError('')
+    setSuccessMessage('')
 
     if (Object.keys(validate(values)).length > 0) {
       return
     }
 
-    console.log('Form submitted:', values)
+    try {
+      setIsSubmitting(true)
+
+      const response = await postJson<{ message: string }>('/auth/register', {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        username: values.username,
+        email: values.email,
+        phone: values.phone,
+        password: values.password,
+      })
+
+      setSuccessMessage(response.message)
+    } catch (error) {
+      setServerError(
+        error instanceof Error ? error.message : 'Registration failed.',
+      )
+      return
+    } finally {
+      setIsSubmitting(false)
+    }
+
     onRegistered()
   }
 
@@ -182,9 +209,21 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
             icon={<LockIcon />}
           />
 
-          <button className="submit-button" type="submit">
-            Sign Up
+          <button className="submit-button" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Creating Account...' : 'Sign Up'}
           </button>
+
+          {serverError ? (
+            <p className="error-banner" role="alert">
+              {serverError}
+            </p>
+          ) : null}
+
+          {successMessage ? (
+            <p className="success-message" role="status">
+              {successMessage}
+            </p>
+          ) : null}
 
           <div className="divider" aria-hidden="true">
             <span></span>

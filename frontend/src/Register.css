@@ -147,7 +147,8 @@
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
-    opacity 0.2s ease;
+    opacity 0.2s ease,
+    filter 0.2s ease;
 }
 
 .submit-button {
@@ -165,6 +166,13 @@
 .submit-button:active,
 .google-button:active {
   transform: translateY(0);
+}
+
+.submit-button:disabled,
+.google-button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  filter: saturate(0.9);
 }
 
 .divider {
@@ -289,6 +297,16 @@
   color: #0d7755;
   background: #eefbf5;
   border: 1px solid #bde8d4;
+  font-size: 0.88rem;
+}
+
+.error-banner {
+  margin: 2px 0 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #a33a4e;
+  background: #fff3f5;
+  border: 1px solid #f0c6cf;
   font-size: 0.88rem;
 }
 

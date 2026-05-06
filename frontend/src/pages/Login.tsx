@@ -1,5 +1,6 @@
 import { type FormEvent, type ReactNode, useState } from 'react'
 import '../Register.css'
+import { postJson } from '../lib/api'
 
 type LoginProps = {
   onSwitchToRegister: () => void
@@ -34,24 +35,47 @@ function validate(values: LoginValues): LoginErrors {
 function Login({ onSwitchToRegister }: LoginProps) {
   const [values, setValues] = useState<LoginValues>(initialValues)
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [serverError, setServerError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   const errors = validate(values)
-  const hasErrors = Object.keys(errors).length > 0
   const visibleErrors = submitted ? errors : {}
 
   function updateField(name: keyof LoginValues, value: string) {
     setValues((current) => ({ ...current, [name]: value }))
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setSubmitted(true)
+    setServerError('')
+    setSuccessMessage('')
 
     if (Object.keys(validate(values)).length > 0) {
       return
     }
 
-    console.log('Login submitted:', values)
+    try {
+      setIsSubmitting(true)
+
+      const response = await postJson<{
+        message: string
+        session: { access_token: string; refresh_token: string }
+        user: { email?: string | null }
+      }>('/auth/login', {
+        email: values.emailOrPhone,
+        password: values.password,
+      })
+
+      localStorage.setItem('hanthana.session', JSON.stringify(response.session))
+      localStorage.setItem('hanthana.user', JSON.stringify(response.user))
+      setSuccessMessage(response.message)
+    } catch (error) {
+      setServerError(error instanceof Error ? error.message : 'Login failed.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -82,13 +106,19 @@ function Login({ onSwitchToRegister }: LoginProps) {
             icon={<LockIcon />}
           />
 
-          <button className="submit-button" type="submit">
-            Login
+          <button className="submit-button" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Logging In...' : 'Login'}
           </button>
 
-          {submitted && !hasErrors ? (
+          {serverError ? (
+            <p className="error-banner" role="alert">
+              {serverError}
+            </p>
+          ) : null}
+
+          {successMessage ? (
             <p className="success-message" role="status">
-              Login form is ready to connect to your backend auth.
+              {successMessage}
             </p>
           ) : null}
 
