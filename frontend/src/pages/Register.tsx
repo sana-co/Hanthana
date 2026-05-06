@@ -1,5 +1,14 @@
-import { type FormEvent, type ReactNode, useState } from 'react'
+import { type FormEvent, useState } from 'react'
 import '../Register.css'
+import AuthCard from '../components/auth/AuthCard'
+import AuthDivider from '../components/auth/AuthDivider'
+import AuthField from '../components/auth/AuthField'
+import {
+  LockIcon,
+  MailIcon,
+  PhoneIcon,
+  UserIcon,
+} from '../components/auth/AuthIcons'
 import { postJson } from '../lib/api'
 
 type RegisterProps = {
@@ -133,200 +142,111 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
   }
 
   return (
-    <main className="auth-shell">
-      <section className="auth-card" aria-labelledby="register-title">
-        <header className="auth-header">
-          <p className="auth-badge">Join Hanthana</p>
-          <h1 id="register-title">Hanthana</h1>
-          <p className="auth-subtitle">Connect with your community</p>
-        </header>
-
-        <form className="auth-form" onSubmit={handleSubmit} noValidate>
-          <div className="form-grid">
-            <Field
-              label="First Name"
-              name="firstName"
-              type="text"
-              value={values.firstName}
-              error={visibleErrors.firstName}
-              onChange={updateField}
-              icon={<UserIcon />}
-            />
-            <Field
-              label="Last Name"
-              name="lastName"
-              type="text"
-              value={values.lastName}
-              error={visibleErrors.lastName}
-              onChange={updateField}
-              icon={<UserIcon />}
-            />
-          </div>
-
-          <Field
-            label="Username"
-            name="username"
+    <AuthCard
+      titleId="register-title"
+      title="Hanthana"
+      subtitle="Connect with your community"
+      badge="Join Hanthana"
+    >
+      <form className="auth-form" onSubmit={handleSubmit} noValidate>
+        <div className="form-grid">
+          <AuthField
+            label="First Name"
+            name="firstName"
             type="text"
-            value={values.username}
-            error={visibleErrors.username}
-            onChange={updateField}
+            value={values.firstName}
+            error={visibleErrors.firstName}
+            onChange={(name, value) => updateField(name as keyof FormValues, value)}
             icon={<UserIcon />}
           />
-          <Field
-            label="Email"
-            name="email"
-            type="email"
-            value={values.email}
-            error={visibleErrors.email}
-            onChange={updateField}
-            icon={<MailIcon />}
+          <AuthField
+            label="Last Name"
+            name="lastName"
+            type="text"
+            value={values.lastName}
+            error={visibleErrors.lastName}
+            onChange={(name, value) => updateField(name as keyof FormValues, value)}
+            icon={<UserIcon />}
           />
-          <Field
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            value={values.phone}
-            error={visibleErrors.phone}
-            onChange={updateField}
-            icon={<PhoneIcon />}
-          />
-          <Field
-            label="Password"
-            name="password"
-            type="password"
-            value={values.password}
-            error={visibleErrors.password}
-            onChange={updateField}
-            icon={<LockIcon />}
-          />
-          <Field
-            label="Confirm Password"
-            name="confirmPassword"
-            type="password"
-            value={values.confirmPassword}
-            error={visibleErrors.confirmPassword}
-            onChange={updateField}
-            icon={<LockIcon />}
-          />
+        </div>
 
-          <button className="submit-button" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating Account...' : 'Sign Up'}
-          </button>
-
-          {serverError ? (
-            <p className="error-banner" role="alert">
-              {serverError}
-            </p>
-          ) : null}
-
-          {successMessage ? (
-            <p className="success-message" role="status">
-              {successMessage}
-            </p>
-          ) : null}
-
-          <div className="divider" aria-hidden="true">
-            <span></span>
-            <p>OR</p>
-            <span></span>
-          </div>
-
-          <button className="google-button" type="button">
-            <span className="google-mark" aria-hidden="true"></span>
-            Sign up with Google
-          </button>
-
-          <p className="switch-auth">
-            Already have an account?{' '}
-            <button className="text-link" type="button" onClick={onSwitchToLogin}>
-              Login
-            </button>
-          </p>
-        </form>
-      </section>
-    </main>
-  )
-}
-
-type FieldProps = {
-  label: string
-  name: keyof FormValues
-  type: string
-  value: string
-  error?: string
-  onChange: (name: keyof FormValues, value: string) => void
-  icon: ReactNode
-}
-
-function Field({
-  label,
-  name,
-  type,
-  value,
-  error,
-  onChange,
-  icon,
-}: FieldProps) {
-  const fieldId = `field-${name}`
-  const errorId = `${fieldId}-error`
-
-  return (
-    <label className={`field ${error ? 'field-error' : ''}`} htmlFor={fieldId}>
-      <span className="sr-only">{label}</span>
-      <div className="input-wrap">
-        <span className="field-icon" aria-hidden="true">
-          {icon}
-        </span>
-        <input
-          id={fieldId}
-          name={name}
-          type={type}
-          value={value}
-          placeholder={label}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? errorId : undefined}
-          onChange={(event) => onChange(name, event.target.value)}
+        <AuthField
+          label="Username"
+          name="username"
+          type="text"
+          value={values.username}
+          error={visibleErrors.username}
+          onChange={(name, value) => updateField(name as keyof FormValues, value)}
+          icon={<UserIcon />}
         />
-      </div>
-      <span className="error-text" id={error ? errorId : undefined}>
-        {error ?? ''}
-      </span>
-    </label>
-  )
-}
+        <AuthField
+          label="Email"
+          name="email"
+          type="email"
+          value={values.email}
+          error={visibleErrors.email}
+          onChange={(name, value) => updateField(name as keyof FormValues, value)}
+          icon={<MailIcon />}
+        />
+        <AuthField
+          label="Phone Number"
+          name="phone"
+          type="tel"
+          value={values.phone}
+          error={visibleErrors.phone}
+          onChange={(name, value) => updateField(name as keyof FormValues, value)}
+          icon={<PhoneIcon />}
+        />
+        <AuthField
+          label="Password"
+          name="password"
+          type="password"
+          value={values.password}
+          error={visibleErrors.password}
+          onChange={(name, value) => updateField(name as keyof FormValues, value)}
+          icon={<LockIcon />}
+        />
+        <AuthField
+          label="Confirm Password"
+          name="confirmPassword"
+          type="password"
+          value={values.confirmPassword}
+          error={visibleErrors.confirmPassword}
+          onChange={(name, value) => updateField(name as keyof FormValues, value)}
+          icon={<LockIcon />}
+        />
 
-function UserIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M12 12a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
-      <path d="M5 19a7 7 0 0 1 14 0" />
-    </svg>
-  )
-}
+        <button className="submit-button" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+        </button>
 
-function MailIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 16.5Z" />
-      <path d="m5 8 7 5 7-5" />
-    </svg>
-  )
-}
+        {serverError ? (
+          <p className="error-banner" role="alert">
+            {serverError}
+          </p>
+        ) : null}
 
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M8.7 4.8 7 6.5a2 2 0 0 0-.4 2.3 19 19 0 0 0 8.6 8.6 2 2 0 0 0 2.3-.4l1.7-1.7a1.8 1.8 0 0 0-.4-2.9l-2.5-1.2a1.8 1.8 0 0 0-2 .4l-.7.7a14 14 0 0 1-3.3-3.3l.7-.7a1.8 1.8 0 0 0 .4-2L11.6 5a1.8 1.8 0 0 0-2.9-.2Z" />
-    </svg>
-  )
-}
+        {successMessage ? (
+          <p className="success-message" role="status">
+            {successMessage}
+          </p>
+        ) : null}
 
-function LockIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <rect x="6" y="10" width="12" height="10" rx="2" />
-      <path d="M9 10V7.5a3 3 0 1 1 6 0V10" />
-    </svg>
+        <AuthDivider />
+
+        <button className="google-button" type="button">
+          <span className="google-mark" aria-hidden="true"></span>
+          Sign up with Google
+        </button>
+
+        <p className="switch-auth">
+          Already have an account?{' '}
+          <button className="text-link" type="button" onClick={onSwitchToLogin}>
+            Login
+          </button>
+        </p>
+      </form>
+    </AuthCard>
   )
 }
 
