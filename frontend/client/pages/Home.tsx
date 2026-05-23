@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Home.css'
 import FormPage from './FormPage'
+import { listGroups, type Group } from '../services/groupService'
 
 const navItems = [
   { label: 'My Feed', active: true, badge: undefined, icon: <HomeIcon /> },
@@ -34,7 +36,38 @@ const posts = [
 ]
 
 function Home() {
+  const navigate = useNavigate()
   const [isGroupFormOpen, setIsGroupFormOpen] = useState(false)
+  const [groups, setGroups] = useState<Group[]>([])
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadGroups() {
+      try {
+        const response = await listGroups()
+        if (isMounted) {
+          setGroups(response.groups)
+        }
+      } catch {
+        if (isMounted) {
+          setGroups([])
+        }
+      }
+    }
+
+    loadGroups()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  function handleGroupCreated(group: Group) {
+    setGroups((current) => [group, ...current])
+    setIsGroupFormOpen(false)
+    navigate(`/groups/${group.id}`)
+  }
 
   return (
     <>
@@ -73,8 +106,8 @@ function Home() {
                 <UserIcon />
               </div>
               <div>
-                <h2>WIJAYARATHNA GS</h2>
-                <p>@2023cs26</p>
+                <h2>Dummy Admin</h2>
+                <p>@admin</p>
               </div>
             </section>
 
@@ -106,7 +139,33 @@ function Home() {
                   +
                 </button>
               </div>
-              <p>You haven&apos;t joined or created any groups yet.</p>
+
+              {groups.length > 0 ? (
+                <>
+                  <p className="groups-subtitle">Created by you</p>
+                  <div className="group-list">
+                    {groups.map((group) => (
+                      <button
+                        key={group.id}
+                        className="group-list-card"
+                        type="button"
+                        onClick={() => navigate(`/groups/${group.id}`)}
+                      >
+                        <span className="group-list-card__avatar" aria-hidden="true">
+                          <UserIcon />
+                        </span>
+                        <span className="group-list-card__content">
+                          <strong>{group.groupName}</strong>
+                          <span>{group.membersCount} members</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p>You haven&apos;t joined or created any groups yet.</p>
+              )}
+
               <button className="secondary-button" type="button">
                 See All Groups
               </button>
@@ -190,7 +249,11 @@ function Home() {
         </main>
       </div>
 
-      <FormPage isOpen={isGroupFormOpen} onClose={() => setIsGroupFormOpen(false)} />
+      <FormPage
+        isOpen={isGroupFormOpen}
+        onClose={() => setIsGroupFormOpen(false)}
+        onCreated={handleGroupCreated}
+      />
     </>
   )
 }

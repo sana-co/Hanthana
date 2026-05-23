@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express from 'express'
 import authRoutes from './routes/authRoutes.js'
+import groupRoutes from './routes/groupRoutes.js'
 import healthRoutes from './routes/healthRoutes.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import { notFoundHandler } from './middleware/notFoundHandler.js'
@@ -16,6 +17,7 @@ app.use(express.json())
 
 app.use(healthRoutes)
 app.use('/auth', authRoutes)
+app.use('/groups', groupRoutes)
 
 app.use(notFoundHandler)
 app.use(errorHandler)

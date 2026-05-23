@@ -123,6 +123,16 @@
   color: #687e9f;
 }
 
+.group-form-error {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff2f4;
+  border: 1px solid #f0c7ce;
+  color: #b23a4b;
+  font-size: 0.9rem;
+}
+
 .group-form-field input,
 .group-form-field textarea,
 .group-form-field select {

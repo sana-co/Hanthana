@@ -1,0 +1,20 @@
+[
+  {
+    "id": "dd63565e-a378-4edb-8442-8fb98e0b526f",
+    "groupName": "sanuth",
+    "groupTag": "@sanakenu",
+    "description": "scascasc",
+    "focus": "food",
+    "focusItems": [
+      "food"
+    ],
+    "privacy": "Public",
+    "rules": "ascascasca",
+    "createdByName": "Dummy Admin",
+    "createdByTag": "@sanuth",
+    "createdAt": "2026-05-23T05:20:23.067Z",
+    "membersCount": 1,
+    "channelsCount": 0,
+    "coverImage": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80"
+  }
+]

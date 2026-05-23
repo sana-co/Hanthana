@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import GroupPage from './pages/GroupPage'
 
 const defaultRoute = import.meta.env.VITE_DEV_BYPASS_LOGIN === 'true'
   ? '/home'
@@ -14,6 +15,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/home" element={<Home />} />
+      <Route path="/groups/:groupId" element={<GroupPage />} />
       <Route path="*" element={<Navigate to={defaultRoute} replace />} />
     </Routes>
   )

@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { type FormEvent, type ReactNode, useState } from 'react'
 import './FormPage.css'
+import { createGroup, type Group } from '../services/groupService'
 
 type GroupFormValues = {
   groupName: string
@@ -13,6 +14,7 @@ type GroupFormValues = {
 type FormPageProps = {
   isOpen: boolean
   onClose: () => void
+  onCreated: (group: Group) => void
 }
 
 const initialValues: GroupFormValues = {
@@ -24,8 +26,10 @@ const initialValues: GroupFormValues = {
   rules: '',
 }
 
-function FormPage({ isOpen, onClose }: FormPageProps) {
+function FormPage({ isOpen, onClose, onCreated }: FormPageProps) {
   const [values, setValues] = useState<GroupFormValues>(initialValues)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [serverError, setServerError] = useState('')
 
   if (!isOpen) {
     return null
@@ -33,6 +37,36 @@ function FormPage({ isOpen, onClose }: FormPageProps) {
 
   function updateField(name: keyof GroupFormValues, value: string) {
     setValues((current) => ({ ...current, [name]: value }))
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setServerError('')
+
+    try {
+      setIsSubmitting(true)
+      const storedUser = localStorage.getItem('hanthana.user')
+      const parsedUser = storedUser ? JSON.parse(storedUser) as { email?: string | null } : null
+      const createdByName = 'Dummy Admin'
+      const createdByTag = parsedUser?.email
+        ? `@${parsedUser.email.split('@')[0]}`
+        : '@admin'
+
+      const response = await createGroup({
+        ...values,
+        createdByName,
+        createdByTag,
+      })
+
+      setValues(initialValues)
+      onCreated(response.group)
+    } catch (error) {
+      setServerError(
+        error instanceof Error ? error.message : 'Failed to create group.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -56,7 +90,7 @@ function FormPage({ isOpen, onClose }: FormPageProps) {
           </header>
 
           <div className="group-form-modal__body">
-            <form className="group-form">
+            <form className="group-form" onSubmit={handleSubmit}>
               <FormField label="Group Name" required>
                 <input
                   type="text"
@@ -116,21 +150,27 @@ function FormPage({ isOpen, onClose }: FormPageProps) {
                   rows={4}
                 />
               </FormField>
+
+              {serverError ? (
+                <p className="group-form-error" role="alert">
+                  {serverError}
+                </p>
+              ) : null}
+
+              <footer className="group-form-modal__footer">
+                <button
+                  className="group-form-button group-form-button--ghost"
+                  type="button"
+                  onClick={onClose}
+                >
+                  Cancel
+                </button>
+                <button className="group-form-button group-form-button--primary" type="submit">
+                  {isSubmitting ? 'Creating...' : 'Create Group'}
+                </button>
+              </footer>
             </form>
           </div>
-
-          <footer className="group-form-modal__footer">
-            <button
-              className="group-form-button group-form-button--ghost"
-              type="button"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button className="group-form-button group-form-button--primary" type="button">
-              Create Group
-            </button>
-          </footer>
         </section>
       </div>
     </div>
@@ -141,7 +181,7 @@ type FormFieldProps = {
   label: string
   required?: boolean
   hint?: string
-  children: React.ReactNode
+  children: ReactNode
 }
 
 function FormField({ label, required = false, hint, children }: FormFieldProps) {

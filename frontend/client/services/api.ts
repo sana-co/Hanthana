@@ -4,6 +4,17 @@ type ApiError = {
   error?: string
 }
 
+export async function getJson<TResponse>(path: string): Promise<TResponse> {
+  const response = await fetch(`${apiBaseUrl}${path}`)
+  const data = (await response.json()) as TResponse & ApiError
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Request failed.')
+  }
+
+  return data
+}
+
 export async function postJson<TResponse>(
   path: string,
   body: Record<string, unknown>,
