@@ -1,28 +1,21 @@
 .group-form-page {
-  position: relative;
-  min-height: 100vh;
-  background: #dfe7f1;
-  overflow: hidden;
-}
-
-.group-form-home-layer {
-  min-height: 100vh;
-  filter: blur(12px);
-  transform: scale(1.02);
-  transform-origin: center top;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
   pointer-events: none;
-  user-select: none;
 }
 
 .group-form-overlay {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgba(22, 29, 41, 0.42);
-  backdrop-filter: saturate(0.9);
+  background: rgba(22, 29, 41, 0.34);
+  backdrop-filter: blur(10px) saturate(0.92);
+  -webkit-backdrop-filter: blur(10px) saturate(0.92);
+  pointer-events: auto;
 }
 
 .group-form-modal {
@@ -227,11 +220,6 @@
 }
 
 @media (max-width: 640px) {
-  .group-form-home-layer {
-    filter: blur(8px);
-    transform: scale(1.01);
-  }
-
   .group-form-modal__header,
   .group-form-modal__footer {
     padding: 22px 18px;
