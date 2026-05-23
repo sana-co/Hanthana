@@ -1,6 +1,5 @@
-import { useState } from 'react'
 import './Home.css'
-
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const navItems = [
   { label: 'My Feed', active: true, badge: undefined, icon: <HomeIcon /> },
@@ -34,8 +33,8 @@ const posts = [
 ]
 
 function Home() {
-
-  const [page, setPage] = useState("home");
+  const navigate = useNavigate()
+  const location = useLocation()
 
   return (
     <div className="home-page">
@@ -97,18 +96,18 @@ function Home() {
           <section className="panel groups-panel">
             <div className="panel-heading">
               <h3>Groups</h3>
-              <button className="round-action" type="button" aria-label="Add group" onClick={ ()=>  setPage("form")}>
+              <button
+                className="round-action"
+                type="button"
+                aria-label="Add group"
+                onClick={() =>
+                  navigate('/FormPage', {
+                    state: { backgroundLocation: location },
+                  })
+                }
+              >
                 +
               </button>
-            {page == "form" && (
-              <form>
-                <input type="text" placeholder="Enter name" />
-                <button type="submit">Submit</button>
-                <button onClick={() => setPage("home")}>
-                 Go Back
-               </button>
-              </form>
-            )}
             </div>
             <p>You haven&apos;t joined or created any groups yet.</p>
             <button className="secondary-button" type="button">
