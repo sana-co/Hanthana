@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import './Home.css'
-import { useLocation, useNavigate } from 'react-router-dom'
+import FormPage from './FormPage'
 
 const navItems = [
   { label: 'My Feed', active: true, badge: undefined, icon: <HomeIcon /> },
@@ -33,165 +34,164 @@ const posts = [
 ]
 
 function Home() {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const [isGroupFormOpen, setIsGroupFormOpen] = useState(false)
 
   return (
-    <div className="home-page">
-      <header className="home-topbar">
-        <div className="home-brand">Hanthana</div>
+    <>
+      <div className={`home-page ${isGroupFormOpen ? 'home-page--modal-open' : ''}`}>
+        <header className="home-topbar">
+          <div className="home-brand">Hanthana</div>
 
-        <label className="home-search" htmlFor="home-search">
-          <SearchIcon />
-          <input id="home-search" type="search" placeholder="Search Hanthana" />
-        </label>
+          <label className="home-search" htmlFor="home-search">
+            <SearchIcon />
+            <input id="home-search" type="search" placeholder="Search Hanthana" />
+          </label>
 
-        <div className="home-actions">
-          <button className="create-button" type="button">
-            Create
-          </button>
-          <button className="icon-action" type="button" aria-label="Calendar">
-            <CalendarIcon />
-          </button>
-          <button className="icon-action" type="button" aria-label="Notifications">
-            <BellIcon />
-          </button>
-          <button className="profile-chip" type="button">
-            <span className="profile-chip__avatar" aria-hidden="true">
-              Y
-            </span>
-            <span>Your</span>
-          </button>
-        </div>
-      </header>
-
-      <main className="home-layout">
-        <aside className="home-sidebar">
-          <section className="panel profile-panel">
-            <div className="profile-avatar">
-              <UserIcon />
-            </div>
-            <div>
-              <h2>WIJAYARATHNA GS</h2>
-              <p>@2023cs26</p>
-            </div>
-          </section>
-
-          <nav className="panel side-nav" aria-label="Main navigation">
-            {navItems.map((item) => (
-              <button
-                key={item.label}
-                className={`side-nav__item ${item.active ? 'is-active' : ''}`}
-                type="button"
-              >
-                <span className="side-nav__icon" aria-hidden="true">
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-                {item.badge ? <span className="side-nav__badge">{item.badge}</span> : null}
-              </button>
-            ))}
-          </nav>
-
-          <section className="panel groups-panel">
-            <div className="panel-heading">
-              <h3>Groups</h3>
-              <button
-                className="round-action"
-                type="button"
-                aria-label="Add group"
-                onClick={() =>
-                  navigate('/FormPage', {
-                    state: { backgroundLocation: location },
-                  })
-                }
-              >
-                +
-              </button>
-            </div>
-            <p>You haven&apos;t joined or created any groups yet.</p>
-            <button className="secondary-button" type="button">
-              See All Groups
+          <div className="home-actions">
+            <button className="create-button" type="button">
+              Create
             </button>
-          </section>
-        </aside>
+            <button className="icon-action" type="button" aria-label="Calendar">
+              <CalendarIcon />
+            </button>
+            <button className="icon-action" type="button" aria-label="Notifications">
+              <BellIcon />
+            </button>
+            <button className="profile-chip" type="button">
+              <span className="profile-chip__avatar" aria-hidden="true">
+                Y
+              </span>
+              <span>Your</span>
+            </button>
+          </div>
+        </header>
 
-        <section className="feed-column" aria-label="Feed">
-          {posts.map((post) => (
-            <article className="panel post-card" key={`${post.author}-${post.publishedAt}`}>
-              <div className="post-header">
-                <div className="post-header__identity">
-                  <div className="post-avatar">
-                    <UserIcon />
+        <main className="home-layout">
+          <aside className="home-sidebar">
+            <section className="panel profile-panel">
+              <div className="profile-avatar">
+                <UserIcon />
+              </div>
+              <div>
+                <h2>WIJAYARATHNA GS</h2>
+                <p>@2023cs26</p>
+              </div>
+            </section>
+
+            <nav className="panel side-nav" aria-label="Main navigation">
+              {navItems.map((item) => (
+                <button
+                  key={item.label}
+                  className={`side-nav__item ${item.active ? 'is-active' : ''}`}
+                  type="button"
+                >
+                  <span className="side-nav__icon" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                  {item.badge ? <span className="side-nav__badge">{item.badge}</span> : null}
+                </button>
+              ))}
+            </nav>
+
+            <section className="panel groups-panel">
+              <div className="panel-heading">
+                <h3>Groups</h3>
+                <button
+                  className="round-action"
+                  type="button"
+                  aria-label="Add group"
+                  onClick={() => setIsGroupFormOpen(true)}
+                >
+                  +
+                </button>
+              </div>
+              <p>You haven&apos;t joined or created any groups yet.</p>
+              <button className="secondary-button" type="button">
+                See All Groups
+              </button>
+            </section>
+          </aside>
+
+          <section className="feed-column" aria-label="Feed">
+            {posts.map((post) => (
+              <article className="panel post-card" key={`${post.author}-${post.publishedAt}`}>
+                <div className="post-header">
+                  <div className="post-header__identity">
+                    <div className="post-avatar">
+                      <UserIcon />
+                    </div>
+                    <div>
+                      <h3>
+                        {post.author} <span>&rsaquo; {post.group}</span>
+                      </h3>
+                      <p>{post.publishedAt}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3>
-                      {post.author} <span>&rsaquo; {post.group}</span>
-                    </h3>
-                    <p>{post.publishedAt}</p>
-                  </div>
+                  <button className="icon-action more-button" type="button" aria-label="More">
+                    <MoreIcon />
+                  </button>
                 </div>
-                <button className="icon-action more-button" type="button" aria-label="More">
-                  <MoreIcon />
+
+                <div className="post-body">
+                  <h4>{post.title}</h4>
+                  <p>{post.body}</p>
+                </div>
+
+                <footer className="post-footer">
+                  <div className="vote-group">
+                    <button className="vote-button" type="button" aria-label="Upvote">
+                      <ArrowUpIcon />
+                    </button>
+                    <span>{post.upvotes}</span>
+                    <button className="vote-button is-active" type="button" aria-label="Downvote">
+                      <ArrowDownIcon />
+                    </button>
+                    <span>{post.downvotes}</span>
+                  </div>
+
+                  <div className="comment-meta">
+                    <CommentIcon />
+                    <span>{post.comments} comments</span>
+                  </div>
+                </footer>
+              </article>
+            ))}
+          </section>
+
+          <aside className="right-rail">
+            <section className="panel utility-panel">
+              <div className="panel-heading">
+                <h3>Messages</h3>
+                <button className="icon-action" type="button" aria-label="Compose message">
+                  <EditIcon />
                 </button>
               </div>
 
-              <div className="post-body">
-                <h4>{post.title}</h4>
-                <p>{post.body}</p>
+              <label className="utility-search" htmlFor="messages-search">
+                <SearchIcon />
+                <input
+                  id="messages-search"
+                  type="search"
+                  placeholder="Search messages"
+                />
+              </label>
+
+              <p className="empty-state">No messages yet</p>
+            </section>
+
+            <section className="panel utility-panel">
+              <div className="panel-heading">
+                <h3>Friend Requests</h3>
               </div>
+              <p className="empty-state">No pending friend requests</p>
+            </section>
+          </aside>
+        </main>
+      </div>
 
-              <footer className="post-footer">
-                <div className="vote-group">
-                  <button className="vote-button" type="button" aria-label="Upvote">
-                    <ArrowUpIcon />
-                  </button>
-                  <span>{post.upvotes}</span>
-                  <button className="vote-button is-active" type="button" aria-label="Downvote">
-                    <ArrowDownIcon />
-                  </button>
-                  <span>{post.downvotes}</span>
-                </div>
-
-                <div className="comment-meta">
-                  <CommentIcon />
-                  <span>{post.comments} comments</span>
-                </div>
-              </footer>
-            </article>
-          ))}
-        </section>
-
-        <aside className="right-rail">
-          <section className="panel utility-panel">
-            <div className="panel-heading">
-              <h3>Messages</h3>
-              <button className="icon-action" type="button" aria-label="Compose message">
-                <EditIcon />
-              </button>
-            </div>
-
-            <label className="utility-search" htmlFor="messages-search">
-              <SearchIcon />
-              <input
-                id="messages-search"
-                type="search"
-                placeholder="Search messages"
-              />
-            </label>
-
-            <p className="empty-state">No messages yet</p>
-          </section>
-
-          <section className="panel utility-panel">
-            <div className="panel-heading">
-              <h3>Friend Requests</h3>
-            </div>
-            <p className="empty-state">No pending friend requests</p>
-          </section>
-        </aside>
-      </main>
-    </div>
+      <FormPage isOpen={isGroupFormOpen} onClose={() => setIsGroupFormOpen(false)} />
+    </>
   )
 }
 

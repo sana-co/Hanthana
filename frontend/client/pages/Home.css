@@ -2,6 +2,16 @@
   min-height: 100vh;
   background: #edf3fb;
   color: #2a3346;
+  transition:
+    filter 0.25s ease,
+    transform 0.25s ease;
+}
+
+.home-page--modal-open {
+  filter: blur(8px);
+  transform: scale(0.992);
+  pointer-events: none;
+  user-select: none;
 }
 
 .home-topbar {

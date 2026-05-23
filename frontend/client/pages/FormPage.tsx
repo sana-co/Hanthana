@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import type { Location } from 'react-router-dom'
 import './FormPage.css'
 
 type GroupFormValues = {
@@ -12,8 +10,9 @@ type GroupFormValues = {
   rules: string
 }
 
-type ModalLocationState = {
-  backgroundLocation?: Location
+type FormPageProps = {
+  isOpen: boolean
+  onClose: () => void
 }
 
 const initialValues: GroupFormValues = {
@@ -25,38 +24,32 @@ const initialValues: GroupFormValues = {
   rules: '',
 }
 
-function FormPage() {
-  const navigate = useNavigate()
-  const location = useLocation()
+function FormPage({ isOpen, onClose }: FormPageProps) {
   const [values, setValues] = useState<GroupFormValues>(initialValues)
-  const hasBackgroundLocation = Boolean(
-    (location.state as ModalLocationState | null)?.backgroundLocation,
-  )
+
+  if (!isOpen) {
+    return null
+  }
 
   function updateField(name: keyof GroupFormValues, value: string) {
     setValues((current) => ({ ...current, [name]: value }))
   }
 
-  function handleClose() {
-    if (hasBackgroundLocation) {
-      navigate(-1)
-      return
-    }
-
-    navigate('/home')
-  }
-
   return (
-    <div className="group-form-page">
-      <div className="group-form-overlay">
-        <section className="group-form-modal" aria-labelledby="create-group-title">
+    <div className="group-form-page" role="dialog" aria-modal="true" aria-labelledby="create-group-title">
+      <div className="group-form-overlay" onClick={onClose}>
+        <section
+          className="group-form-modal"
+          aria-labelledby="create-group-title"
+          onClick={(event) => event.stopPropagation()}
+        >
           <header className="group-form-modal__header">
             <h1 id="create-group-title">Create New Group</h1>
             <button
               className="group-form-close"
               type="button"
               aria-label="Close create group form"
-              onClick={handleClose}
+              onClick={onClose}
             >
               <CloseIcon />
             </button>
@@ -130,7 +123,7 @@ function FormPage() {
             <button
               className="group-form-button group-form-button--ghost"
               type="button"
-              onClick={handleClose}
+              onClick={onClose}
             >
               Cancel
             </button>
