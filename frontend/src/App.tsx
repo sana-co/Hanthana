@@ -5,8 +5,11 @@ import Register from './pages/Register'
 
 type AppView = 'register' | 'login' | 'home'
 
+const defaultView: AppView =
+  import.meta.env.VITE_DEV_BYPASS_LOGIN === 'true' ? 'home' : 'register'
+
 function App() {
-  const [view, setView] = useState<AppView>('register')
+  const [view, setView] = useState<AppView>(defaultView)
 
   if (view === 'register') {
     return (

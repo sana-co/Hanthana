@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import './Home.css'
+
 
 const navItems = [
   { label: 'My Feed', active: true, badge: undefined, icon: <HomeIcon /> },
@@ -32,6 +34,9 @@ const posts = [
 ]
 
 function Home() {
+
+  const [showForm, setShowForm] = useState(false);
+
   return (
     <div className="home-page">
       <header className="home-topbar">
@@ -92,7 +97,7 @@ function Home() {
           <section className="panel groups-panel">
             <div className="panel-heading">
               <h3>Groups</h3>
-              <button className="round-action" type="button" aria-label="Add group">
+              <button className="round-action" type="button" aria-label="Add group" onClick={ ()=>  setShowForm(true)}>
                 +
               </button>
             </div>
