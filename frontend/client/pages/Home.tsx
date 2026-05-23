@@ -100,6 +100,12 @@ function Home() {
               <button className="round-action" type="button" aria-label="Add group" onClick={ ()=>  setShowForm(true)}>
                 +
               </button>
+            {showForm && (
+              <form>
+                <input type="text" placeholder="Enter name" />
+                <button type="submit">Submit</button>
+              </form>
+            )}
             </div>
             <p>You haven&apos;t joined or created any groups yet.</p>
             <button className="secondary-button" type="button">

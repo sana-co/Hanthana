@@ -1,10 +1,10 @@
 import { type FormEvent, useState } from 'react'
-import '../Register.css'
+import '../styles/auth.css'
 import AuthCard from '../components/auth/AuthCard'
 import AuthDivider from '../components/auth/AuthDivider'
 import AuthField from '../components/auth/AuthField'
 import { LockIcon, MailIcon } from '../components/auth/AuthIcons'
-import { postJson } from '../lib/api'
+import { loginUser } from '../services/authService'
 
 type LoginProps = {
   onSwitchToRegister: () => void
@@ -62,18 +62,10 @@ function Login({ onSwitchToRegister }: LoginProps) {
 
     try {
       setIsSubmitting(true)
-
-      const response = await postJson<{
-        message: string
-        session: { access_token: string; refresh_token: string }
-        user: { email?: string | null }
-      }>('/auth/login', {
+      const response = await loginUser({
         email: values.emailOrPhone,
         password: values.password,
       })
-
-      localStorage.setItem('hanthana.session', JSON.stringify(response.session))
-      localStorage.setItem('hanthana.user', JSON.stringify(response.user))
       setSuccessMessage(response.message)
     } catch (error) {
       setServerError(error instanceof Error ? error.message : 'Login failed.')

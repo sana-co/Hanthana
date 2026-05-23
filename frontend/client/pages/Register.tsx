@@ -1,5 +1,5 @@
 import { type FormEvent, useState } from 'react'
-import '../Register.css'
+import '../styles/auth.css'
 import AuthCard from '../components/auth/AuthCard'
 import AuthDivider from '../components/auth/AuthDivider'
 import AuthField from '../components/auth/AuthField'
@@ -9,7 +9,7 @@ import {
   PhoneIcon,
   UserIcon,
 } from '../components/auth/AuthIcons'
-import { postJson } from '../lib/api'
+import { registerUser } from '../services/authService'
 
 type RegisterProps = {
   onRegistered: () => void
@@ -27,6 +27,7 @@ type FormValues = {
 }
 
 type FormErrors = Partial<Record<keyof FormValues, string>>
+
 const initialValues: FormValues = {
   firstName: '',
   lastName: '',
@@ -75,9 +76,7 @@ function validate(values: FormValues): FormErrors {
 
   if (!values.password) {
     errors.password = 'Password is required.'
-  } else if (
-    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(values.password)
-  ) {
+  } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(values.password)) {
     errors.password = '8+ chars with upper, lower, and number.'
   }
 
@@ -98,7 +97,6 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
   const [successMessage, setSuccessMessage] = useState('')
 
   const errors = validate(values)
-
   const visibleErrors = submitted ? errors : {}
 
   function updateField(name: keyof FormValues, value: string) {
@@ -107,7 +105,6 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-
     setSubmitted(true)
     setServerError('')
     setSuccessMessage('')
@@ -118,8 +115,7 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
 
     try {
       setIsSubmitting(true)
-
-      const response = await postJson<{ message: string }>('/auth/register', {
+      const response = await registerUser({
         firstName: values.firstName,
         lastName: values.lastName,
         username: values.username,
@@ -127,7 +123,6 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
         phone: values.phone,
         password: values.password,
       })
-
       setSuccessMessage(response.message)
     } catch (error) {
       setServerError(
