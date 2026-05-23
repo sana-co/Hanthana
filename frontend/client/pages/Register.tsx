@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../styles/auth.css'
 import AuthCard from '../components/auth/AuthCard'
 import AuthDivider from '../components/auth/AuthDivider'
@@ -10,11 +11,6 @@ import {
   UserIcon,
 } from '../components/auth/AuthIcons'
 import { registerUser } from '../services/authService'
-
-type RegisterProps = {
-  onRegistered: () => void
-  onSwitchToLogin: () => void
-}
 
 type FormValues = {
   firstName: string
@@ -89,7 +85,8 @@ function validate(values: FormValues): FormErrors {
   return errors
 }
 
-function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
+function Register() {
+  const navigate = useNavigate()
   const [values, setValues] = useState<FormValues>(initialValues)
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -133,7 +130,7 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
       setIsSubmitting(false)
     }
 
-    onRegistered()
+    navigate('/home')
   }
 
   return (
@@ -236,7 +233,7 @@ function Register({ onRegistered, onSwitchToLogin }: RegisterProps) {
 
         <p className="switch-auth">
           Already have an account?{' '}
-          <button className="text-link" type="button" onClick={onSwitchToLogin}>
+          <button className="text-link" type="button" onClick={() => navigate('/login')}>
             Login
           </button>
         </p>

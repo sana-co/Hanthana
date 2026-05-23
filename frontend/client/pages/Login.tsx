@@ -1,14 +1,11 @@
 import { type FormEvent, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../styles/auth.css'
 import AuthCard from '../components/auth/AuthCard'
 import AuthDivider from '../components/auth/AuthDivider'
 import AuthField from '../components/auth/AuthField'
 import { LockIcon, MailIcon } from '../components/auth/AuthIcons'
 import { loginUser } from '../services/authService'
-
-type LoginProps = {
-  onSwitchToRegister: () => void
-}
 
 type LoginValues = {
   emailOrPhone: string
@@ -36,7 +33,8 @@ function validate(values: LoginValues): LoginErrors {
   return errors
 }
 
-function Login({ onSwitchToRegister }: LoginProps) {
+function Login() {
+  const navigate = useNavigate()
   const [values, setValues] = useState<LoginValues>(initialValues)
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -67,6 +65,7 @@ function Login({ onSwitchToRegister }: LoginProps) {
         password: values.password,
       })
       setSuccessMessage(response.message)
+      navigate('/home')
     } catch (error) {
       setServerError(error instanceof Error ? error.message : 'Login failed.')
     } finally {
@@ -127,7 +126,7 @@ function Login({ onSwitchToRegister }: LoginProps) {
 
         <p className="switch-auth">
           Don&apos;t have an account?{' '}
-          <button className="text-link" type="button" onClick={onSwitchToRegister}>
+          <button className="text-link" type="button" onClick={() => navigate('/register')}>
             Register
           </button>
         </p>

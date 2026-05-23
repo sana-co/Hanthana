@@ -35,7 +35,7 @@ const posts = [
 
 function Home() {
 
-  const [showForm, setShowForm] = useState(false);
+  const [page, setPage] = useState("home");
 
   return (
     <div className="home-page">
@@ -97,13 +97,16 @@ function Home() {
           <section className="panel groups-panel">
             <div className="panel-heading">
               <h3>Groups</h3>
-              <button className="round-action" type="button" aria-label="Add group" onClick={ ()=>  setShowForm(true)}>
+              <button className="round-action" type="button" aria-label="Add group" onClick={ ()=>  setPage("form")}>
                 +
               </button>
-            {showForm && (
+            {page == "form" && (
               <form>
                 <input type="text" placeholder="Enter name" />
                 <button type="submit">Submit</button>
+                <button onClick={() => setPage("home")}>
+                 Go Back
+               </button>
               </form>
             )}
             </div>
